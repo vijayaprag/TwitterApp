@@ -1,0 +1,17 @@
+
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %} {% trans 'Articles' %} {% endblock %}
+{% block main %}
+
+{% for year, month_list in archives %}
+  {{ year }} archives: 
+  {% for month, has_link in month_list %}
+    {% if has_link %}<a href="/{{ month.year }}/{{ month.month }}/">{% endif %}
+      {{ month|date:"M" }}
+    {% if has_link %}</a>{% endif %}
+  {% endfor %}
+{% endfor %}
+{% endblock main %}

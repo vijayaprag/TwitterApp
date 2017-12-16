@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans 'Network' %}{% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/network.css' %}" rel="stylesheet">
+  <script type='text/javascript' src='http://code.jquery.com/jquery-1.7.1.js'></script>
+
+<style>
+.btn {
+    cursor:pointer;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+
+    border:1px solid #a6a6a6;
+    border-top-color:#bdbdbd;
+    border-bottom-color:#8b8a8b;
+
+    padding:9px 14px 9px;
+
+    color:#666666;
+    font-size:11px;
+    background-position:0px 0px;
+
+    text-shadow: 0 1px 0 #fff;
+    font-weight:bold;
+
+    background-color: #ffffff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e8e8e8)); /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, #ffffff, #e8e8e8); /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image:    -moz-linear-gradient(top, #ffffff, #e8e8e8); /* FF3.6 */
+    background-image:     -ms-linear-gradient(top, #ffffff, #e8e8e8); /* IE10 */
+    background-image:      -o-linear-gradient(top, #ffffff, #e8e8e8); /* Opera 11.10+ */
+    background-image:         linear-gradient(top, #ffffff, #e8e8e8);
+
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+
+
+}
+
+.btn:hover {
+    color:#333;
+    border-color:#999;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f6f6f6)); /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, #ffffff, #f6f6f6); /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image:    -moz-linear-gradient(top, #ffffff, #f6f6f6); /* FF3.6 */
+    background-image:     -ms-linear-gradient(top, #ffffff, #f6f6f6); /* IE10 */
+    background-image:      -o-linear-gradient(top, #ffffff, #f6f6f6); /* Opera 11.10+ */
+    background-image:         linear-gradient(top, #ffffff, #f6f6f6);
+}
+.btn:active{
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#ffffff)); /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, #e8e8e8, #ffffff); /* Chrome 10+, Saf5.1+, iOS 5+ */
+    background-image:    -moz-linear-gradient(top, #e8e8e8, #ffffff); /* FF3.6 */
+    background-image:     -ms-linear-gradient(top, #e8e8e8, #ffffff); /* IE10 */
+    background-image:      -o-linear-gradient(top, #e8e8e8, #ffffff); /* Opera 11.10+ */
+    background-image:         linear-gradient(top, #e8e8e8, #ffffff);
+}
+.btn:focus {
+    outline: none;
+    border-color:#BD4A39;
+}
+
+
+/* Follow Button Styles */
+
+button.followButton{
+   /* width:160px;*/    width: 80px;
+    float: right;
+    margin-top: -7px;
+}
+button.followButton.following{
+    background-color: #57A957;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#62c462), to(#57a957));
+    background-image: -moz-linear-gradient(top, #62c462, #57a957);
+    background-image: -ms-linear-gradient(top, #62c462, #57a957);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #62c462), color-stop(100%, #57a957));
+    background-image: -webkit-linear-gradient(top, #62c462, #57a957);
+    background-image: -o-linear-gradient(top, #62c462, #57a957);
+    background-image: linear-gradient(top, #62c462, #57a957);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#62c462', endColorstr='#57a957', GradientType=0);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    border-color: #57A957 #57A957 #3D773D;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color:#fff;
+}
+button.followButton.unfollow{
+    background-color: #C43C35;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#ee5f5b), to(#c43c35));
+    background-image: -moz-linear-gradient(top, #ee5f5b, #c43c35);
+    background-image: -ms-linear-gradient(top, #ee5f5b, #c43c35);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ee5f5b), color-stop(100%, #c43c35));
+    background-image: -webkit-linear-gradient(top, #ee5f5b, #c43c35);
+    background-image: -o-linear-gradient(top, #ee5f5b, #c43c35);
+    background-image: linear-gradient(top, #ee5f5b, #c43c35);
+
+</style>
+
+
+{% endblock head %}
+
+{% block main %}
+  <div class="page-header">
+    <h1>Network</h1>
+  </div>
+  <div class="users">
+
+    <div class="row">
+      {% for user in users %}
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+             <!-- <img src="{{ user.profile.get_picture }}" style="width:20px">-->
+
+              <img src="/staticfiles/img/profile_pictures/{{ user.username }}.jpg" class="user" style="width:20px">
+
+            <a href="{% url 'profile' user.username %}">{{ user.profile.get_screen_name }}</a>
+            <!--<button class="btn followButton" rel="6">Follow</button>-->
+            <a href="http://tweetapp.pythonanywhere.com{% url 'profile' user.username %}" onclick="return doalertinvite(this);"> <button class="btn followButton" rel="6">Follow</button></a>
+
+
+
+              <div class="message-section" style="display:none;"></div>
+    {% for user_profile in all_user_profiles %}
+        <button data-url="{% url "core_views.follow_user" user_profile_id=user_profile.id %}"
+                class="follow-button" type="button">Follow</button>
+    {% endfor %}
+
+            </div>
+            <div class="panel-body">
+              {% if user.profile.job_title %}
+                <p><strong>{% trans 'Job Title' %}:</strong> {{ user.profile.job_title }}</p>
+              {% endif %}
+              <p><strong>{% trans 'Username' %}: </strong> {{ user.username }}</p>
+              {% if user.profile.location %}
+                <p><strong>{% trans 'Location' %}:</strong> {{ user.profile.location }}</p>
+              {% endif %}
+              {% if user.profile.url %}
+                <p><strong>{% trans 'Url' %}:</strong> {{ user.profile.get_url }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% include 'paginator.html' with paginator=users %}
+      </div>
+    </div>
+
+  </div>
+<script>
+$('button.followButton').live('click', function(e){
+    e.preventDefault();
+    $button = $(this);
+    if($button.hasClass('following')){
+
+        //$.ajax(); Do Unfollow
+
+        $button.removeClass('following');
+        $button.removeClass('unfollow');
+        $button.text('Follow');
+    } else {
+
+        // $.ajax(); Do Follow
+
+        $button.addClass('following');
+        $button.text('Following');
+    }
+});
+
+$('button.followButton').hover(function(){
+     $button = $(this);
+    if($button.hasClass('following')){
+        $button.addClass('unfollow');
+        $button.text('Unfollow');
+    }
+}, function(){
+    if($button.hasClass('following')){
+        $button.removeClass('unfollow');
+        $button.text('Following');
+    }
+});
+</script>
+<script>
+function doalertinvite(obj) {
+   alert(obj.getAttribute("href"));
+//var myVar = '{{ user.profile.get_screen_name }}';
+//alert(myVar);
+//var myVar1 = '{{ user.username }}';
+//alert(myVar1);
+//window.location = 'http://tweetapp.pythonanywhere.com/network/';
+return false;
+}
+</script>
+{% endblock main %}

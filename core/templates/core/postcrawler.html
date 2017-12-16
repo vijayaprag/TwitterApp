@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %} Post Crawler -{{ block.super }}{% endblock %}
+{% block main %}
+
+<h1>Post Articles</h1>
+
+<form action="/searchcrawler" method="post">
+<!--<form method="post">-->
+			{% csrf_token %}
+			<label for="url">
+				URL:
+				<input name="url" type="text" value="http://www.keza.net"/>
+			</label>
+			<label for="depth">
+				Depth:
+				<input name="depth" type="text" value="2"/>
+			</label>
+			<label for="search">
+				Search:
+				<input name="search" type="text" value="JavaScript"/>
+			</label>
+			<input type="submit" value="Submit" />
+		</form>
+
+{% endblock main %}

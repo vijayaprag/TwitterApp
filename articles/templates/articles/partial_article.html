@@ -1,0 +1,111 @@
+
+              <div id="8">
+<article>
+  <h2><a href="{% url 'article' article.slug %}">{{ article.title }}</a></h2>
+  <!--<div class="share"> <a href="{{ mailto_url|safe }}">{{ article.title }}</a></div>-->
+  <div class="info">
+    <span class="date">
+      <span class="glyphicon glyphicon-calendar"></span>
+      {{ article.create_date }}
+      {{ article.created__year }}
+    </span>
+    <span class="user">
+   <!--   <a href="{% url 'profile' article.create_user.username %}"><img src="{{ article.create_user.profile.get_picture }}"></a>
+ <a href="{% url 'profile' article.create_user.username %}">{{ article.create_user.profile.get_screen_name }}</a>-->
+ <a href="{% url 'profile' article.create_user.username %}"><img src="/staticfiles/img/profile_pictures/{{ article.create_user.username }}.jpg" class="user" style="width:20px"></a>
+ <a href="{% url 'profile' article.create_user.username %}">    {{ article.create_user.profile.get_screen_name }}</a>
+    </span>
+
+ <!-- <span id="count{{ article.id }}">{{ article.total_likes }}</span>
+    <input type="button" class="like" id="{{ article.id }}" value="Like" />-->
+
+    <span class="comments">
+      <span class="glyphicon glyphicon-comment"></span>
+      {{ article.get_comments.count }} Comments
+    </span>
+
+    <span class="share">
+        <i class="fa fa-share" aria-hidden="true"></i>
+        <a href="http://tweetapp.pythonanywhere.com{% url 'article' article.slug %}" id="link" onclick="return doalert(this);">Share post</a>
+       <!-- <input type="text" id="myText" value="">-->
+    </span>
+
+    <span class="invite">
+        <i class="fa fa-user-plus" aria-hidden="true"></i>
+        <a href="http://tweetapp.pythonanywhere.com{% url 'article' article.slug %}" id="link" onclick="return doalertinvite(this);">Invite</a>
+    </span>
+
+
+
+  </div>
+
+  <div class="content">
+    {{ article.get_content_as_markdown|safe }}
+  </div>
+
+
+
+  {% if article.tags.names %}
+    <div class="tags">
+      {% for tag in article.tags.names %}
+        <a href="{% url 'tag' tag %}"><span class="label label-default">{{ tag }}</span></a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>
+  </div>
+<style> section.articles p,.content p {
+    color: black;
+}span.comment-count, span.commenttitle {
+    color: black !important;
+}</style>
+
+<script>
+    function doalert(obj) {
+       // alert(obj.getAttribute("href"));
+var myvar1 = 'Copy & use this URL to share ';
+var myVar = ' @{{ article.create_user.profile.get_screen_name }} post \n';
+//alert(myvar1 + ' ' + myVar + ' ' + obj.getAttribute("href"));
+alert(myvar1 + ' ' + obj.getAttribute("href"));
+  //document.getElementById("myText").value = obj.getAttribute("href");
+window.location = 'http://tweetapp.pythonanywhere.com/email/';
+          return false;
+</script>
+
+<script>
+function doalertinvite(obj) {
+       // alert(obj.getAttribute("href"));
+var myvar1 = 'Forward this article to user ';
+var myVar = ' @{{ article.create_user.profile.get_screen_name }} post \n';
+//alert(myvar1 + ' ' + myVar + ' ' + obj.getAttribute("href"));
+alert(myvar1 + ' ' + obj.getAttribute("href"));
+  //document.getElementById("myText").value = obj.getAttribute("href");
+var url =obj.getAttribute("href");
+//window.location = 'http://tweetapp.pythonanywhere.com/contact/'+ url;
+window.location = 'http://tweetapp.pythonanywhere.com/contact/';
+          return false;
+
+    }
+</script>
+
+<script>
+    function sortUsingNestedText(parent, childSelector, keySelector) {
+    var items = parent.children(childSelector).sort(function(a, b) {
+        var vA = $(keySelector, a).text();
+        var vB = $(keySelector, b).text();
+       // return (vA < vB) ? -1 : (vA > vB) ? 1 : 0;
+       return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+    });
+    parent.append(items);
+}
+
+/* setup sort attributes */
+$('#sDate').data("sortKey", "span.comments");
+
+/* sort on button click */
+$("button.btnSort").click(function() {
+   sortUsingNestedText($('#sortThis'), "div", $(this).data("sortKey"));
+});
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+

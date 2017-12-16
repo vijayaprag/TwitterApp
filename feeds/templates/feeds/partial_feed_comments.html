@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load i18n %}
+
+{% for comment in feed.get_comments %}
+  <li feed-id="{{ comment.pk }}" csrf="{{ csrf_token }}">
+    {% if comment.user == user %}
+      <span class="glyphicon glyphicon-remove remove-feed" title="{% trans 'Click to remove this comment' %}"></span>
+
+     <!-- <a href="http://tweetapp.pythonanywhere.com/feeds/edit/{{ comment.pk }}" class="btn btn-primary pull-right" id="iconedit"><span class="glyphicon glyphicon-pencil" title="{% trans 'Edit Comments' %}"></span></a>-->
+      <input type="submit" value="Edit" id="driver" class="btn btn-primary pull-right"/>
+      <!--<input type="text" id="text" value="{{ comment.linkfy_post|safe }}" class="form-control input-sm"/>-->
+        <div id="formedit">
+            <form role="form" method="post" action="{{ comment }}" onsubmit="return false">
+                {% csrf_token %}
+                <input type="hidden" name="feed" value="{{ feed.pk }}">
+                <input type="text" id="text" class="form-control input-sm" value="{{ comment.linkfy_post|safe }}" name="post" maxlength="255">
+            </form>
+        </div>
+
+
+
+    {% endif %}
+    <a href="{% url 'profile' comment.user.username %}">
+    <!--  <img src="{{ comment.user.profile.get_picture }}" class="user-comment">-->
+      <img src="/staticfiles/img/profile_pictures/{{ comment.user.profile }}.jpg" class="user-comment">
+    </a>
+    <h4>
+      <a href="{% url 'profile' comment.user.username %}">
+        {{ comment.user.profile.get_screen_name }}
+      </a>
+      <small>{{ comment.date|naturaltime }}</small>
+    </h4>
+    <div>{{ comment.linkfy_post|safe }}</div>
+  </li>
+{% empty %}
+  <li class="empty">{% trans 'Be the first one to comment' %}</li>
+{% endfor %}
+
+<script>
+$().ready = function() {
+    $('#text').hide();
+     $('#formedit').hide();
+
+    $("#driver").click(function() {
+        $('#text').toggle();
+        $('#formedit').toggle();
+    });
+
+}();
+</script>
+<style>input#driver {
+    margin-top: -5px;
+    margin-bottom: 5px;
+}input#text {
+    margin-left: 4px;
+}</style>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block head %}
+  <script src="{% static 'js/articles.js' %}"></script>
+{% endblock head %}
+
+{% block main %}
+
+
+  <form role="form" method="post" action="{{ comment }}" onsubmit="return false">
+          {% csrf_token %}
+           {% for field in form.visible_fields %}
+          <input type="hidden" name="feed" value="{{ feed.pk }}">
+          <input type="text" class="form-control input-sm" placeholder="{% trans 'Write a comment...' %}" name="post" maxlength="255">
+          {% endfor %}
+        </form>
+
+
+{% endblock main %}

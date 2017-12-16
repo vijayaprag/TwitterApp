@@ -1,0 +1,494 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block head %}
+  <link href="{% static 'css/feeds.css' %}?v=1" rel="stylesheet">
+  <script src="{% static 'js/jquery.bullseye-1.0-min.js' %}"></script>
+  <script type='text/javascript' src='{% static "js/feeds.js" %}?v=1'></script>
+   <style>
+  ul.stream {
+  margin: 0;
+  padding: 0;
+}
+ul.stream li {
+  list-style: none;
+  border-bottom: 1px solid #eeeeee;
+  padding: 1em 0;
+}
+ul.stream li:last-child {
+  border-bottom: none;
+}
+ul.stream li a img.user {
+  width: 60px;
+  border-radius: 100px;
+  float: left;
+}
+ul.stream li div.post {
+  margin-left: 60px;
+  padding: 0 0 0 1.2em;
+  overflow-x: auto;
+}
+ul.stream li div.post h3 {
+  font-size: 1em;
+  margin: 0;
+  margin-bottom: .2em;
+}
+ul.stream li div.post h3 small {
+  margin-left: .3em;
+  font-size: .8em;
+}
+ul.stream li div.post p {
+  margin: 0;
+}
+ul.stream li div.post div.interaction {
+  padding-top: .2em;
+}
+ul.stream li div.post div.interaction a {
+  margin-right: .6em;
+  font-size: .8em;
+}
+.stream-update {
+  text-align: center;
+  border-bottom: 1px solid #eeeeee;
+  display: none;
+}
+.stream-update a {
+  display: block;
+  padding: .6em 0;
+  background-color: #f5f8fa;
+}
+.stream-update a:hover {
+  text-decoration: none;
+  background-color: #e1e8ed;
+}
+.compose {
+  display: none;
+  border-bottom: 1px solid #eee;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.compose h2 {
+  font-size: 1.4em;
+}
+.comments {
+  margin-top: .6em;
+  display: none;
+}
+.comments ol {
+  margin: .8em 0 0;
+  padding: .2em 0;
+  background-color: #f4f4f4;
+  border-radius: 3px;
+  overflow-x: auto;
+}
+.comments ol li {
+  list-style: none;
+  padding: 0;
+}
+.comments ol li img.user-comment {
+  width: 35px;
+  border-radius: 4px;
+  float: left;
+  margin-left: 10px;
+}
+.comments ol li div {
+  margin-left: 45px;
+  padding: 0 .8em;
+  font-size: .9em;
+}
+.comments ol li {
+  padding: .6em .6em .6em 0;
+  border-bottom: none;
+}
+.comments ol li h4 {
+  margin: 0;
+  margin-left: 45px;
+  padding: 0 0 .2em .8em;
+  font-size: .9em;
+}
+.comments ol li h4 small {
+  margin-left: .3em;
+}
+.empty {
+  margin: 0 .8em;
+  font-size: .9em;
+}
+.load {
+  text-align: center;
+  padding-top: 1em;
+  border-top: 1px solid #eeeeee;
+  display: none;
+  padding: 15px 0;
+}
+.loadcomment {
+  text-align: center;
+}
+.remove-feed {
+  color: #bbbbbb;
+  font-size: .8em;
+  padding-top: .2em;
+  float: right;
+  cursor: pointer;
+}
+.remove-feed:hover {
+  color: #333333;
+}
+.panel-feed {
+  margin-top: 20px;
+}
+.panel-feed .panel-body {
+  padding: 0;
+}
+.feed-container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+img.user {
+    width: 60px;
+    border-radius: 100px;
+   /* float: left;*/
+}
+a.homeart {
+   /* color: white;*/color: black;float: right;
+}.row {
+    margin-top: 25px;
+}.page-header h1 {
+    margin: 0;
+    font-weight: 100;
+    font-size: 16px !important;
+    /*color: white;*/    color: black;
+}
+.page-header {
+    padding-bottom: 22px;
+
+}
+.categories a {
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 10px 7px 3px;
+    margin-bottom: 2px;
+    display: block;
+    color: #1d2128;
+    text-decoration: none;
+}
+.categories a:hover {
+
+    /*background: #fff!important;*/    background: #f5f5f5!important;
+    border: 1px solid #edeeee;
+}
+.categories {
+   /* background-color: #f5f5f5;background-color: white;
+    border-color: #ddd;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);*/margin-top: 3px;
+
+    border-radius: 5px;
+    border: 2px solid #f0f0f0;
+    background: #fff;
+    box-shadow: 0 0 30px #edeeee;
+    padding: 15px 20px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+    display: block;
+
+}
+section.articles {
+   /* background-color: #f5f5f5;   background-color: white;
+    border-color: #ddd;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);*/
+    border-radius: 5px;
+    border: 2px solid #f0f0f0;
+    background: #fff;
+    box-shadow: 0 0 30px #edeeee;
+    padding: 15px 20px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+    display: block;    margin-top: -15px;
+
+}
+section.articles a {
+    font-weight: 500;
+    background: hsla(0,0%,100%,.5);
+    border-color: #edeeee;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 8px 7px 1px 9px;
+    margin-bottom: 0px;
+    display: block;
+    color: #1d2128;
+    text-decoration: none;
+}
+div#test a {
+    font-weight: 100;
+    font-size: 16px !important;
+    /*color: white;*/    color: black;    text-decoration: none;
+}
+a.homeart:hover {
+    color: #e14283 !important;
+}
+div#test {
+    float: left;
+}
+a.active:focus {
+    color: #118df9!important;
+}
+button#sDate:focus,input[type="button"]:focus,button#sLike:focus,button#sCommentFeed:focus {
+        color: #118df9!important;
+    font-weight: bold;
+}button#sDate,input[type="button"],button#sLike,button#sCommentFeed {
+    border: none;
+    background: transparent;
+}
+i.fa.fa-user-plus {
+    position: absolute;
+    right: 37px;
+    top: 11px;
+    display: inline-block;
+    cursor: pointer;
+    width: 30px;
+    line-height: 20px;
+    border-radius: 3px;
+    border: 1px solid #999;
+    color: #333;
+    text-align: center;
+    transition: all .2s;
+}i.fa.fa-user-plus:hover {
+    background: #00628c;
+    color: #fff;
+    border-color: #00628c;
+}
+.users,.panel.panel-default.panel-feed {
+    border-radius: 5px;
+    border: 2px solid #f0f0f0;
+    background: #fff;
+    box-shadow: 0 0 30px #edeeee;
+    padding: 15px 20px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+    display: block;
+}
+div#sortThis .feed-container {
+    border-radius: 5px;
+    border: 2px solid #f0f0f0;
+    background: #fff;
+    box-shadow: 0 0 30px #edeeee;
+    padding: 15px 20px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: -21px;
+    display: block;
+}.users p {
+    padding: 0px 0px 0px 0px;
+}
+.page-header {
+    border-radius: 5px;
+    border: 2px solid #f0f0f0;
+    background: #fff;
+    box-shadow: 0 0 30px #edeeee;
+    padding: 15px 20px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 10px;
+    display: block;
+}.btn-primary {
+    color: #fff;
+    background-color: #0fbfbd;
+    border-color: #0fbfbd;
+}.users {
+    margin-top: 4px;
+}
+</style>
+
+<script>
+window.onload = function () {
+    var desc = false;
+    document.getElementById("test").onclick = function () {
+        sortUnorderedList("list", desc);
+        desc = !desc;
+        return false;
+    }
+}
+function compareText(a1, a2) {
+    var t1 = a1.innerText,
+        t2 = a2.innerText;
+    return t1 > t2 ? 1 : (t1 < t2 ? -1 : 0);
+}
+function sortUnorderedList(ul, sortDescending) {
+    if (typeof ul == "string") {
+        ul = document.getElementById(ul);
+    }
+    var lis = ul.getElementsByTagName("LI");
+    var vals = [];
+    for (var i = 0, l = lis.length; i < l; i++) {
+        vals.push(lis[i]);
+    }
+    vals.sort(compareText);
+    if (sortDescending) {
+        vals.reverse();
+    }
+    ul.innerHTML = '';
+    for (var i = 0, l = vals.length; i < l; i++) {
+        ul.appendChild(vals[i]);
+    }
+}
+</script>
+<script>
+   jQuery(function(){
+    var minimized_elements = $('p.minimize');
+    minimized_elements.each(function(){
+        var t = $(this).text();
+        if(t.length < 300) return;
+        $(this).html(
+            t.slice(0,300)+'<span>... </span><a href="#" class="more">More</a>'+
+            '<span style="display:none;">'+ t.slice(300,t.length)+' <a href="#" class="less">Less</a></span>'
+        );
+
+    });
+    $('a.more', minimized_elements).click(function(event){
+        event.preventDefault();
+        $(this).hide().prev().hide();
+        $(this).next().show();
+    });
+    $('a.less', minimized_elements).click(function(event){
+        event.preventDefault();
+        $(this).parent().hide().prev().show().prev().show();
+    });
+});
+</script>
+<script>
+    function sortUsingNestedText(parent, childSelector, keySelector) {
+    var items = parent.children(childSelector).sort(function(a, b) {
+        var vA = $(keySelector, a).text();
+        var vB = $(keySelector, b).text();
+        return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+    });
+    parent.append(items);
+}
+/* setup sort attributes */
+$('#sLike').data("sortKey", "span.like-count");
+/* sort on button click */
+$("button.btnSort").click(function() {
+   sortUsingNestedText($('#sortThis'), "div", $(this).data("sortKey"));
+});
+</script>
+<script>function sortUsingNestedText(parent, childSelector, keySelector) {
+    var items = parent.children(childSelector).sort(function(a, b) {
+        var vA = $(keySelector, a).text();
+        var vB = $(keySelector, b).text();
+        return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
+    });
+    parent.append(items);
+}
+/* setup sort attributes */
+$('#sLike').data("sortKey", "span.like-count");
+$('#sCommentFeed').data("sortKey", "span.comment-count");
+
+/* sort on button click */
+$("button.btnSort").click(function() {
+   sortUsingNestedText($('#sortThis'), "div", $(this).data("sortKey"));
+});
+</script>
+<style>p {
+    padding: 0 0 20px;
+}.content__right__box {
+    float: right;
+    margin-top: -21px;
+}
+a#iconedit {
+    background-color: #f4f4f4;
+    border-color: #f4f4f4;
+    color: gray;
+    padding: 0px 12px;
+}
+</style>
+
+{% endblock head %}
+
+{% block main %}
+
+<div class="row">
+
+  <!--   <div class="col-md-6 col-md-offset-3">-->
+  <div class="col-md-12">
+      <div class="page-header">
+       <button type="button" class="btn btn-primary pull-right btn-compose" title="{% trans 'Press Ctrl + P to compose' %}">
+          <span class="glyphicon glyphicon-share-alt"></span> {% trans 'Compose' %}
+        </button>
+        <h1>{% trans 'Blog' %}</h1>
+      </div>
+      <div class="panel panel-default panel-feed">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans 'Latest posts' %}</h3>
+
+            <div class="content__right__box">
+	            <div class="post-list post-list--filter">
+	                <div class="post post--filter">
+	                    <strong>Sort by: </strong>
+	                        <a class="active" href="http://tweetapp.pythonanywhere.com/">Date</a>
+	                        /
+	                        <button id="sCommentFeed" class="btnSort">Comment</button>
+                            /
+                            <button id="sLike" class="btnSort">Like</button>
+	                </div>
+	            </div>
+	        </div>
+
+        </div>
+        <div class="panel-body">
+
+          <div class="compose">
+            <h2>{% trans "Compose a new post" %}</h2>
+            <form role="form" id="compose-form">
+              {% csrf_token %}
+              <input type="hidden" name="last_feed">
+              <div class="form-group">
+                <textarea class="form-control" rows="3" name="post" maxlength="4000"></textarea>
+              </div>
+                <div class="form-group">
+                <button type="button" class="btn btn-primary btn-post">
+                  <span class="glyphicon glyphicon-send"></span> {% trans 'Post' %}
+                </button>
+                <button type="button" class="btn btn-default btn-cancel-compose">{% trans 'Cancel' %}</button>
+                <!--<span class="help-block help-count pull-right">1000</span>-->
+              </div>
+            </form>
+          </div>
+          <div class="stream-update">
+            <a href="#"><span class="new-posts"></span> {% trans 'new posts' %}</a>
+          </div>
+          <ul class="stream">
+              <div id="sortThis">
+            {% for feed in feeds %}
+              {% include '/feeds/partial_feed.html' with feed=feed %}
+            {% endfor %}
+            </div>
+          </ul>
+          <div class="load">
+            <img src="{% static 'img/loading.gif' %}">
+          </div>
+          <form method="get" action="{% url 'load' %}" id="load_feed" autocomplete="off">
+            <input type="hidden" name="feed_source" id="feed_source" value="all">
+            <input type="hidden" name="from_feed" value="{{ from_feed }}">
+            <input type="hidden" name="page" value="{{ page }}">
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+
+</div>
+
+
+
+{% endblock main %}

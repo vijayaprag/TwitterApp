@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% block title %} News {% endblock %}
+{% block head %}
+<style>
+/*.Instapundit,.thesun,.redstate,.powerlineblog,.newsbusters,.breitbart,.michellemalkin,.Overlawyered,.thegatewaypundit,.maggiesfarm,.peekinthewell,.openmarket,.miamiherald,.familysecuritymatters,.steynonline,.jamieglazov,
+.projectveritas,.townhall,.dailycaller,.frontpagemag{
+    width: 40%;
+    float: left;
+}.usatoday,.hotair,.pjmedia,.oanow,.cafehayek,.dailysignal,.aceofspades,.jihadwatch,.carpediemmountaineering,.faithfreedom,.AtlasShrugs,.latimes,.shark-tank,.gatesofvienna,.newsmax,.shark,.nationalreview,.weeklystandard,
+.spectator,.wsj{
+    width: 45%;
+    float: right;
+} .washingtonexaminer {
+    width: 108%;
+    margin-left: -1px;
+}
+.description a img {
+    width: 250px;
+}img {
+    border: 0px;
+}
+.townhall,.projectveritas  {
+    width: 108% !important;
+    margin-left: -1px;
+}*/
+.Instapundit1 {
+    width: 32.3333%;
+    float: left;
+}.usatoday1 {
+    width: 33.333%;
+    float: left;
+    margin-left: 10px;
+}.hotair1 {
+    width: 32.333%;
+    float: left;
+    margin-left: 10px;
+}
+.fw-feed-title {
+    display: none;
+}
+#fw-feed-items .fw-feed-item-image-module {
+    margin: 0 0 0 5px;
+    padding: 0;
+    float: none !important;
+}
+</style>
+{% endblock head %}
+{% block main %}
+
+<div class="col-md-3">
+<!-- start feedwind code -->
+<script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" data-fw-param="51704/"></script>
+<!-- end feedwind code -->
+</div>
+
+<div class="col-md-3">
+<!-- start feedwind code -->
+<script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" data-fw-param="51705/"></script>
+<!-- end feedwind code -->
+</div>
+
+<div class="col-md-3">
+<!-- start feedwind code -->
+<script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" data-fw-param="51682/"></script>
+<script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" data-fw-param="51677/"></script>
+<!-- end feedwind code -->
+</div>
+
+<div class="col-md-3">
+<script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" data-fw-param="51695/"></script>
+</div>
+
+<div class="extra">
+<!-- start feedwind code -->
+<!--<script type="text/javascript" src="https://feed.mikle.com/js/fw-loader.js" data-fw-param="52083/"></script> -->
+<!-- end feedwind code -->
+</div>
+
+
+{% endblock main %}

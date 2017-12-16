@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block head %}
+  <script src="{% static 'js/articles.js' %}"></script>
+  <script>$(function () {
+  $(".publish").click(function () {
+    $("input[name='status']").val("P");
+    $("form").submit();
+  });
+
+  $(".draft").click(function () {
+    $("input[name='status']").val("D");
+    $("form").submit();
+  });
+
+  $(".preview").click(function () {
+    $.ajax({
+      url: '/articles/preview/',
+      data: $("form").serialize(),
+      cache: false,
+      type: 'post',
+      beforeSend: function () {
+        $("#preview .modal-body").html("<div style='text-align: center; padding-top: 1em'><img src='/static/img/loading.gif'></div>");
+      },
+      success: function (data) {
+        $("#preview .modal-body").html(data);
+      }
+    });
+  });
+
+  $("#comment").focus(function () {
+    $(this).attr("rows", "3");
+    $("#comment-helper").fadeIn();
+  });
+
+  $("#comment").blur(function () {
+    $(this).attr("rows", "1");
+    $("#comment-helper").fadeOut();
+  });
+
+  $("#comment").keydown(function (evt) {
+    var keyCode = evt.which?evt.which:evt.keyCode;
+    if (evt.ctrlKey && (keyCode == 10 || keyCode == 13)) {
+      $.ajax({
+        url: '/articles/comment/',
+        data: $("#comment-form").serialize(),
+        cache: false,
+        type: 'post',
+        success: function (data) {
+          $("#comment-list").html(data);
+          var comment_count = $("#comment-list .comment").length;
+          $(".comment-count").text(comment_count);
+          $("#comment").val("");
+          $("#comment").blur();
+        }
+      });
+    }
+  });
+
+});</script>
+<script>$(function () {
+
+  $.fn.markdown = function () {
+    var _textarea = $(this);
+
+    $(".markdown .btn-group button").click(function (e) {
+      e.preventDefault();
+      var action = $(this).attr("ref");
+      var selection = $(_textarea).selection();
+
+      switch (action) {
+        case "header":
+          $(_textarea).selection("replace", {text: "# " + selection});
+          break;
+        case "bold":
+          $(_textarea).selection("replace", {text: "**" + selection + "**"});
+          break;
+        case "italic":
+          $(_textarea).selection("replace", {text: "_" + selection + "_"});
+          break;
+        case "list":
+          var selection_list = selection.split("\n");
+          var selection_list_result = "";
+          for (var i = 0 ; i < selection_list.length ; i++) {
+            selection_list_result += "* " + selection_list[i] + "\n";
+          };
+          if (selection_list_result.length > 0) {
+            selection_list_result = selection_list_result.substring(0, selection_list_result.length - 1);
+          }
+          $(_textarea).selection("replace", {text: selection_list_result});
+          break;
+        case "link":
+          $("#markdown_link_text").val("");
+          $("#markdown_url").val("");
+          $("#markdown_insert_link").modal("show");
+          break;
+        case "picture":
+          $("#markdown_picture_url").val("");
+          $("#markdown_alt_text").val("");
+          $("#markdown_insert_picture").modal("show");
+          break;
+        case "indent-left":
+          var selection_list = selection.split("\n");
+          var selection_list_result = "";
+          for (var i = 0; i < selection_list.length; i++) {
+            selection_list_result += "    " + selection_list[i] + "\n";
+          };
+          if (selection_list_result.length > 0) {
+            selection_list_result = selection_list_result.substring(0, selection_list_result.length - 1);
+          }
+          $(_textarea).selection("replace", {text: selection_list_result});
+          break;
+        case "indent-right":
+          var selection_list = selection.split("\n");
+          var selection_list_result = "";
+          for (var i = 0; i < selection_list.length ; i++) {
+            selection_list_result += selection_list[i].trim() + "\n";
+          };
+          if (selection_list_result.length > 0) {
+            selection_list_result = selection_list_result.substring(0, selection_list_result.length - 1);
+          }
+          $(_textarea).selection("replace", {text: selection_list_result});
+          break;
+      };
+
+    });
+
+    $(".add_link").click(function () {
+      var selection = $(_textarea).selection();
+      var text = $("#markdown_link_text").val();
+      var url = $("#markdown_url").val();
+      var link = "[" + text + "](" + url + ")";
+      $(_textarea).selection("replace", {text: link});
+      $("#markdown_insert_link").modal("hide")
+    });
+
+    $(".add_picture").click(function () {
+      var selection = $(_textarea).selection();
+      var url = $("#markdown_picture_url").val();
+      var alt = $("#markdown_alt_text").val();
+      var picture = "![" + alt + "](" + url + ")";
+      $(_textarea).selection("replace", {text: picture});
+      $("#markdown_insert_picture").modal("hide")
+    });
+
+  };
+});</script>
+
+<script>
+    function showSelected(thisObj)
+{
+
+  document.getElementById('id_tags').value = thisObj.options[thisObj.selectedIndex].text;
+
+}
+</script>
+<style>
+    input#id_tags, select#selectList {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+</style>
+{% endblock head %}
+
+{% block main %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'articles' %}">{% trans 'Articles' %}</a></li>
+    <li class="active">{% trans 'Write Article' %}</li>
+  </ol>
+  <form action="{% url 'write' %}" method="post" role="form">
+    {% csrf_token %}
+    {{ form.status }}
+        <div class="form-group">
+            <label for="Category" class="control-label">Category</label>
+                <select id='selectList' onClick="showSelected(this)">
+                <option>News</option>
+                <option>Politics</option>
+                <option>Sports</option>
+                <option>Technology</option>
+                <option>Art</option>
+                <option>Entertainment</option>
+                <option>Science</option>
+                <option>Music</option>
+                <option>Nature</option>
+                </select>
+        </div>
+    {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Content' %}
+          {% include 'markdown_editor.html' with textarea='id_content' %}
+        {% endif %}
+        {{ field }}
+        {% if field.help_text %}
+          <span class="help-block">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+          <label class="control-label">{{ error }}</label>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+
+
+    <div class="form-group">
+      <button type="button" class="btn btn-primary publish">{% trans 'Publish' %}</button>
+      <button type="button" class="btn btn-default draft">{% trans 'Save Draft' %}</button>
+      <button type="button" class="btn btn-default preview" data-toggle="modal" data-target="#preview">{% trans 'Preview' %}</button>
+      <a href="{% url 'articles' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+    </div>
+  </form>
+
+  <div class="modal fade" id="preview">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Article Preview</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock main %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block head %}
+  <script src="{% static 'js/articles.js' %}"></script>
+  <script><script>$(function () {
+  $(".publish").click(function () {
+    $("input[name='status']").val("P");
+    $("form").submit();
+  });
+
+  $(".draft").click(function () {
+    $("input[name='status']").val("D");
+    $("form").submit();
+  });
+
+  $(".preview").click(function () {
+    $.ajax({
+      url: '/articles/preview/',
+      data: $("form").serialize(),
+      cache: false,
+      type: 'post',
+      beforeSend: function () {
+        $("#preview .modal-body").html("<div style='text-align: center; padding-top: 1em'><img src='/static/img/loading.gif'></div>");
+      },
+      success: function (data) {
+        $("#preview .modal-body").html(data);
+      }
+    });
+  });
+
+  $("#comment").focus(function () {
+    $(this).attr("rows", "3");
+    $("#comment-helper").fadeIn();
+  });
+
+  $("#comment").blur(function () {
+    $(this).attr("rows", "1");
+    $("#comment-helper").fadeOut();
+  });
+
+  $("#comment").keydown(function (evt) {
+    var keyCode = evt.which?evt.which:evt.keyCode;
+    if (evt.ctrlKey && (keyCode == 10 || keyCode == 13)) {
+      $.ajax({
+        url: '/articles/comment/',
+        data: $("#comment-form").serialize(),
+        cache: false,
+        type: 'post',
+        success: function (data) {
+          $("#comment-list").html(data);
+          var comment_count = $("#comment-list .comment").length;
+          $(".comment-count").text(comment_count);
+          $("#comment").val("");
+          $("#comment").blur();
+        }
+      });
+    }
+  });
+
+});</script></script>
+{% endblock head %}
+
+{% block main %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'articles' %}">{% trans 'Articles' %}</a></li>
+    <li class="active">{% trans 'Drafts' %}</li>
+  </ol>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>{% trans 'Title' %}</th>
+        <th>{% trans 'Content' %}</th>
+        <th>{% trans 'Tags' %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in drafts %}
+        <tr>
+          <td><a href="{% url 'edit_article' article.pk %}">{{ article.title }}</a></td>
+          <td>{{ article.get_summary_as_markdown|safe }}</td>
+          <td>
+            {% for tag in article.get_tags %}
+              <span class="label label-default">{{ tag }}</span>
+            {% endfor %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center">
+            {% trans 'No draft to display' %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock main %}

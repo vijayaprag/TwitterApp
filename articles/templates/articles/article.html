@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/articles.css' %}" rel="stylesheet">
+  <script src="{% static 'js/articles.js' %}"></script>
+  <style>.articles article {
+  padding-bottom: 1.4em;
+  border-bottom: 1px solid #eeeeee;
+  margin-top: 2.4em;
+}
+
+.articles article p {
+  font-size: 1.2em;
+}
+
+.articles article:last-child {
+  border-bottom: none;
+}
+
+.info {
+  margin-bottom: .5em;
+  color: #a0a0a0;
+}
+
+.info a {
+  color: #a0a0a0;
+}
+
+.info > span {
+  margin-right: 1em;
+}
+
+.info .user img {
+  width: 20px;
+  border-radius: 3px;
+}
+
+article .tags {
+  font-size: 1em;
+}
+
+.popular-tags h4 {
+  margin-top: 2em;
+}
+
+.popular-tags .label {
+  margin-top: .4em;
+  font-size: .8em;
+  line-height: 2;
+}
+
+.popular-tags a:hover, .tags a:hover {
+  text-decoration: none;
+}
+
+.user-portrait img {
+  border-radius: 4px;
+  width: 34px;
+}
+
+.user-portrait {
+  width: 40px;
+  float: left;
+}
+
+.comment-input {
+  float: left;
+  width: -moz-calc(100% - 40px);
+  width: -webkit-calc(100% - 40px);
+  width: calc(100% - 40px);
+}
+
+.post-comment {
+  margin-bottom: 1em;
+}
+
+.comment-portrait {
+  width: 40px;
+  border-radius: 5px;
+  float: left;
+}
+
+.comment-text {
+  margin-left: 50px;
+}
+
+.comment-text h5 {
+  padding-top: .1em;
+  margin: .2em 0;
+}
+
+.comment-text h5 small {
+  margin-left: .6em;
+}
+
+.comment-text p {
+  margin: 0;
+  font-size: .9em;
+}
+
+.comment {
+  border-bottom: 1px solid #e3e3e3;
+  padding: .8em 0;
+}
+
+.comment:last-child {
+  border-bottom: none;
+}</style>
+  <script><script>$(function () {
+  $(".publish").click(function () {
+    $("input[name='status']").val("P");
+    $("form").submit();
+  });
+
+  $(".draft").click(function () {
+    $("input[name='status']").val("D");
+    $("form").submit();
+  });
+
+  $(".preview").click(function () {
+    $.ajax({
+      url: '/articles/preview/',
+      data: $("form").serialize(),
+      cache: false,
+      type: 'post',
+      beforeSend: function () {
+        $("#preview .modal-body").html("<div style='text-align: center; padding-top: 1em'><img src='/static/img/loading.gif'></div>");
+      },
+      success: function (data) {
+        $("#preview .modal-body").html(data);
+      }
+    });
+  });
+
+  $("#comment").focus(function () {
+    $(this).attr("rows", "3");
+    $("#comment-helper").fadeIn();
+  });
+
+  $("#comment").blur(function () {
+    $(this).attr("rows", "1");
+    $("#comment-helper").fadeOut();
+  });
+
+  $("#comment").keydown(function (evt) {
+    var keyCode = evt.which?evt.which:evt.keyCode;
+    if (evt.ctrlKey && (keyCode == 10 || keyCode == 13)) {
+      $.ajax({
+        url: '/articles/comment/',
+        data: $("#comment-form").serialize(),
+        cache: false,
+        type: 'post',
+        success: function (data) {
+          $("#comment-list").html(data);
+          var comment_count = $("#comment-list .comment").length;
+          $(".comment-count").text(comment_count);
+          $("#comment").val("");
+          $("#comment").blur();
+        }
+      });
+    }
+  });
+
+});</script></script>
+{% endblock head %}
+
+{% block main %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'articles' %}">{% trans 'Articles' %}</a></li>
+    <li class="active">{% trans 'Article' %}</li>
+  </ol>
+  {% if article.create_user == request.user %}
+    <div>
+      <a href="{% url 'edit_article' article.pk %}" class="btn btn-primary pull-right">
+        <span class="glyphicon glyphicon-pencil"></span> {% trans "Edit Article" %}
+      </a>
+    </div>
+  {% endif %}
+  {% include 'articles/partial_article.html' with article=article %}
+  {% include 'articles/partial_article_comments.html' with article=article %}
+{% endblock main %}

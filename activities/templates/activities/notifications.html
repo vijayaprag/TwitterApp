@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% load humanize %}
+
+{% block title %} Notifications {% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/notifications.css' %}" rel="stylesheet">
+  <style>ul.all-notifications {
+  padding: 0;
+  margin-top: 1em;
+}
+
+ul.all-notifications {
+    padding: 0;
+    margin-top: 1em;
+    color: white;
+}
+ul.all-notifications a {
+    color: #510801;
+}
+ul.all-notifications li {
+  list-style: none;
+  border-bottom: 1px solid #eeeeee;
+  padding: .8em 0;
+}
+
+ul.all-notifications li:last-child {
+  border-bottom: none;
+}
+
+ul.all-notifications li small {
+  color: #cccccc;
+  font-size: .8em;
+}
+
+ul.all-notifications li p {
+  margin: 0;
+}
+
+ul.all-notifications li div {
+  margin-left: 40px;
+  padding-left: 1em;
+}
+
+ul.all-notifications .user-picture {
+  width: 40px;
+  float: left;
+}</style>
+{% endblock head %}
+
+{% block main %}
+  <div class="page-header">
+    <h1>Notifications</h1>
+  </div>
+  <ul class="all-notifications">
+    {% for notification in notifications %}
+      <li class="clearfix">
+        <!--<a href="{% url 'profile' notification.from_user.username %}"><img src="{{ notification.from_user.profile.get_picture }}" class="user-picture"></a>-->
+        <a href="{% url 'profile' notification.from_user.username %}"><img src="/staticfiles/img/profile_pictures/{{ notification.from_user.username }}.jpg" class="user-picture"></a>
+        <div>
+          <small>{{ notification.date|naturaltime }}</small>
+          <p>{{ notification|safe }}</p>
+        </div>
+      </li>
+    {% empty %}
+      <li>{% trans 'You have no notification' %}</li>
+    {% endfor %}
+  </ul>
+{% endblock main %}

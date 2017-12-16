@@ -1,0 +1,33 @@
+{% load i18n %}
+<hr>
+<style>div#comment-list {
+    background-color: transparent;
+    border: none;
+    color: white;
+}span.comment-count,span.commenttitle {
+    color: white;
+}.text-muted {
+    color: white;
+}</style>
+<span class="pull-right text-muted" id="comment-helper" style="display: none"><small>{% trans 'Press Ctrl + Enter to post' %}</small></span>
+<h4><span class="comment-count">{{ article.get_comments.count }}</span><span class="commenttitle"> {% trans 'Comments' %}</span></h4>
+<div class="post-comment clearfix">
+  <form role="form" id="comment-form">
+    {% csrf_token %}
+    <input type="hidden" name="article" value="{{ article.pk }}">
+    <div class="user-portrait clearfix">
+      <!--<img src="{{ user.profile.get_picture }}">-->
+      <img src="/staticfiles/img/profile_pictures/{{ user.username }}.jpg">
+    </div>
+    <div class="comment-input clearfix">
+      <textarea class="form-control" rows="1" placeholder="{% trans 'Write a comment...' %}" name="comment" id="comment"></textarea>
+    </div>
+  </form>
+</div>
+<div class="well well-sm" id="comment-list">
+  {% for comment in article.get_comments %}
+    {% include 'articles/partial_article_comment.html' with comment=comment %}
+  {% empty %}
+    <div style="padding: .6em 0">{% trans 'Be the first one to comment!' %}</div>
+  {% endfor %}
+</div>
